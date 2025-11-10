@@ -5,6 +5,7 @@ type Option[T any] interface {
 	IsSomeAnd(pred Predicate[T]) bool
 	IsNone() bool
 	IsNoneOr(pred Predicate[T]) bool
+	Equal(Option[T]) bool
 	Expect(msg string) T
 	Unwrap() T
 	UnwrapOrElse(fn func() T) T

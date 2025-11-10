@@ -29,6 +29,10 @@ func (o *option[T]) IsNoneOr(pred Predicate[T]) bool {
 	return true
 }
 
+func (o *option[T]) Equal(other Option[T]) bool {
+	return o == other
+}
+
 func (o *option[T]) Expect(msg string) T {
 	if o.value == nil {
 		panic(msg)

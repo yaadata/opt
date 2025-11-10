@@ -124,24 +124,222 @@ func TestOption_None(t *testing.T) {
 	t.Run("Or returns other option", func(t *testing.T) {
 		t.Parallel()
 		// [A]rrange
-		optionA := None[string]()
+		opt := None[string]()
 		expected := Some("OptionB")
 		// [A]ct
-		result := optionA.Or(expected)
+		actual := opt.Or(expected)
 		// [A]ssert
-		must.Eq(t, expected, result)
+		must.True(t, actual.Equal(expected))
 	})
 
 	t.Run("OrElse returns other option", func(t *testing.T) {
 		t.Parallel()
 		// [A]rrange
-		optionA := None[string]()
+		opt := None[string]()
 		expected := Some("OptionB")
 		// [A]ct
-		result := optionA.OrElse(func() Option[string] {
+		result := opt.OrElse(func() Option[string] {
 			return expected
 		})
 		// [A]ssert
 		must.Eq(t, expected, result)
+	})
+}
+
+func TestOption_Some(t *testing.T) {
+	t.Run("IsSome is true", func(t *testing.T) {
+		t.Parallel()
+		// [A]rrange
+		opt := Some("SOME")
+		// [A]ct
+		actual := opt.IsSome()
+		// [A]ssert
+		must.True(t, actual)
+	})
+
+	t.Run("IsSomeAnd with predicate leading to true", func(t *testing.T) {
+		t.Parallel()
+		// [A]rrange
+		opt := Some("SOME")
+		pred := func(value string) bool {
+			return len(value) == 4
+		}
+		// [A]ct
+		actual := opt.IsSomeAnd(pred)
+		// [A]ssert
+		must.True(t, actual)
+	})
+
+	t.Run("IsSomeAnd with predicate leading to false", func(t *testing.T) {
+		t.Parallel()
+		// [A]rrange
+		opt := Some("SOME")
+		pred := func(value string) bool {
+			return len(value) == 3
+		}
+		// [A]ct
+		actual := opt.IsSomeAnd(pred)
+		// [A]ssert
+		must.False(t, actual)
+	})
+
+	t.Run("IsNone is false", func(t *testing.T) {
+		t.Parallel()
+		// [A]rrange
+		opt := Some("SOME")
+		// [A]ct
+		actual := opt.IsNone()
+		// [A]ssert
+		must.False(t, actual)
+	})
+
+	t.Run("IsNoneOr where the predicate leads to false", func(t *testing.T) {
+		t.Parallel()
+		// [A]rrange
+		opt := Some("SOME")
+		pred := func(value string) bool {
+			return len(value) == 3
+		}
+		// [A]ct
+		actual := opt.IsNoneOr(pred)
+		// [A]ssert
+		must.False(t, actual)
+	})
+
+	t.Run("IsNoneOr where the predicate leads to true", func(t *testing.T) {
+		t.Parallel()
+		// [A]rrange
+		opt := Some("SOME")
+		pred := func(value string) bool {
+			return len(value) == 4
+		}
+		// [A]ct
+		actual := opt.IsNoneOr(pred)
+		// [A]ssert
+		must.True(t, actual)
+	})
+
+	t.Run("Expect does not panic and returns the inner value", func(t *testing.T) {
+		t.Parallel()
+		// [A]rrange
+		const EXPECTED = "SOME"
+		opt := Some(EXPECTED)
+		// [A]ct
+		var actual string
+		evaluate := func() {
+			actual = opt.Expect("oops")
+		}
+		// [A]ssert
+		must.NotPanic(t, evaluate)
+		must.Eq(t, EXPECTED, actual)
+	})
+
+	t.Run("Unwrap does not panic and returns the inner value", func(t *testing.T) {
+		t.Parallel()
+		// [A]rrange
+		const EXPECTED = "SOME"
+		opt := Some(EXPECTED)
+		// [A]ct
+		var actual string
+		evaluate := func() {
+			actual = opt.Unwrap()
+		}
+		// [A]ssert
+		must.NotPanic(t, evaluate)
+		must.Eq(t, EXPECTED, actual)
+	})
+
+	t.Run("UnwrapOrElse returns some value", func(t *testing.T) {
+		t.Parallel()
+		// [A]rrange
+		const EXPECTED = "SOME"
+		opt := Some(EXPECTED)
+		// [A]ct
+		actual := opt.UnwrapOrElse(func() string {
+			return "ELSE"
+		})
+		// [A]ssert
+		must.Eq(t, EXPECTED, actual)
+	})
+
+	t.Run("UnwrapOrDefault returns some value", func(t *testing.T) {
+		t.Parallel()
+		// [A]rrange
+		const EXPECTED = "SOME"
+		opt := Some(EXPECTED)
+		// [A]ct
+		actual := opt.UnwrapOrDefault()
+		// [A]ssert
+		must.Eq(t, EXPECTED, actual)
+	})
+
+	t.Run("OkOr returns Result Ok", func(t *testing.T) {
+		t.Parallel()
+		// [A]rrange
+		const EXPECTED = "SOME"
+		opt := Some(EXPECTED)
+		// [A]ct
+		actual := opt.OkOr(errors.New("OkOr"))
+		// [A]ssert
+		must.True(t, actual.IsOk())
+		must.Eq(t, EXPECTED, actual.Unwrap())
+	})
+
+	t.Run("OkOrElse returns Result Ok", func(t *testing.T) {
+		t.Parallel()
+		// [A]rrange
+		const EXPECTED = "SOME"
+		opt := Some(EXPECTED)
+		// [A]ct
+		actual := opt.OkOrElse(func() error {
+			return errors.New("OkOrElse")
+		})
+		// [A]ssert
+		must.True(t, actual.IsOk())
+		must.Eq(t, EXPECTED, actual.Unwrap())
+	})
+
+	t.Run("OkOrElse returns Result Ok", func(t *testing.T) {
+		t.Parallel()
+		// [A]rrange
+		const EXPECTED = "SOME"
+		opt := Some(EXPECTED)
+		// [A]ct
+		actual := opt.OkOrElse(func() error {
+			return errors.New("OkOrElse")
+		})
+		// [A]ssert
+		must.True(t, actual.IsOk())
+		must.Eq(t, EXPECTED, actual.Unwrap())
+	})
+
+	t.Run("Or returns Result original", func(t *testing.T) {
+		t.Parallel()
+		// [A]rrange
+		const EXPECTED = "SOME"
+		opt := Some(EXPECTED)
+		other := Some("OTHER")
+		// [A]ct
+		actual := opt.Or(other)
+		// [A]ssert
+		must.False(t, actual.Equal(other))
+		must.True(t, actual.Equal(opt))
+		must.Eq(t, EXPECTED, actual.Unwrap())
+	})
+
+	t.Run("OrElse returns Result original", func(t *testing.T) {
+		t.Parallel()
+		// [A]rrange
+		const EXPECTED = "SOME"
+		opt := Some(EXPECTED)
+		other := Some("OTHER")
+		// [A]ct
+		actual := opt.OrElse(func() Option[string] {
+			return other
+		})
+		// [A]ssert
+		must.False(t, actual.Equal(other))
+		must.True(t, actual.Equal(opt))
+		must.Eq(t, EXPECTED, actual.Unwrap())
 	})
 }
