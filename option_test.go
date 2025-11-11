@@ -1,4 +1,4 @@
-package optionsgo
+package optionsgo_test
 
 import (
 	"errors"
@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/shoenig/test/must"
+	. "github.com/yaadata/optionsgo"
 )
 
 func TestOption_None(t *testing.T) {
@@ -98,7 +99,7 @@ func TestOption_None(t *testing.T) {
 		// [A]rrange
 		defer func() {
 			if r := recover(); r != nil {
-				must.Eq(t, _FAILED_UNWRAP, r.(string))
+				must.Eq(t, "failed to unwrap None value", r.(string))
 			} else {
 				t.Error("expected a panic but none occurred")
 			}
