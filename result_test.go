@@ -214,7 +214,7 @@ func TestResult_Value(t *testing.T) {
 		result := Ok("value")
 		// [A]ct
 		fn := func() {
-			result.UnwrapErr()
+			_ = result.UnwrapErr()
 		}
 		// [A]ssert
 		must.Panic(t, fn)
