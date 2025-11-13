@@ -16,16 +16,16 @@ func OptionMap[T, V any](option core.Option[T], fn func(value T) V) core.Option[
 	return None[V]()
 }
 
-func OptionMapOr[T, V any](option core.Option[T], fn func(value T) V, or V) core.Option[V] {
+func OptionMapOr[T, V any](option core.Option[T], fn func(value T) V, or V) V {
 	if option.IsSome() {
-		return Some(fn(option.Unwrap()))
+		return fn(option.Unwrap())
 	}
-	return Some(or)
+	return or
 }
 
-func OptionMapOrElse[T, V any](option core.Option[T], fn func(value T) V, orElse func() V) core.Option[V] {
+func OptionMapOrElse[T, V any](option core.Option[T], fn func(value T) V, orElse func() V) V {
 	if option.IsSome() {
-		return Some(fn(option.Unwrap()))
+		return fn(option.Unwrap())
 	}
-	return Some(orElse())
+	return orElse()
 }

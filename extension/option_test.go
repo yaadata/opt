@@ -74,8 +74,7 @@ func TestOptionMapOr(t *testing.T) {
 		// [A]ct
 		actual := extension.OptionMapOr(option, fn, "DEFAULT")
 		// [A]ssert
-		must.True(t, actual.IsSome())
-		must.Eq(t, "AAA", actual.Unwrap())
+		must.Eq(t, "AAA", actual)
 	})
 
 	t.Run("None returns Some of default", func(t *testing.T) {
@@ -88,8 +87,7 @@ func TestOptionMapOr(t *testing.T) {
 		// [A]ct
 		actual := extension.OptionMapOr(option, fn, expected)
 		// [A]ssert
-		must.True(t, actual.IsSome())
-		must.Eq(t, expected, actual.Unwrap())
+		must.Eq(t, expected, actual)
 	})
 }
 
@@ -105,8 +103,7 @@ func TestOptionMapOrElse(t *testing.T) {
 			return "DEFAULT"
 		})
 		// [A]ssert
-		must.True(t, actual.IsSome())
-		must.Eq(t, "AAA", actual.Unwrap())
+		must.Eq(t, "AAA", actual)
 	})
 
 	t.Run("None returns Some of default", func(t *testing.T) {
@@ -121,7 +118,6 @@ func TestOptionMapOrElse(t *testing.T) {
 			return expected
 		})
 		// [A]ssert
-		must.True(t, actual.IsSome())
-		must.Eq(t, expected, actual.Unwrap())
+		must.Eq(t, expected, actual)
 	})
 }

@@ -102,11 +102,11 @@ func (o *option[T]) Map(fn func(T) any) core.OptionChain[any] {
 	return OptionMap(o, fn)
 }
 
-func (o *option[T]) MapOr(fn func(T) any, or any) core.OptionChain[any] {
+func (o *option[T]) MapOr(fn func(T) any, or any) any {
 	return OptionMapOr(o, fn, or)
 }
 
-func (o *option[T]) MapOrElse(fn func(T) any, orElse func() any) core.OptionChain[any] {
+func (o *option[T]) MapOrElse(fn func(T) any, orElse func() any) any {
 	return OptionMapOrElse(o, fn, orElse)
 }
 
