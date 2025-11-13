@@ -5,6 +5,20 @@ import (
 	"github.com/yaadata/optionsgo/internal"
 )
 
+func ResultAnd[T, V any](result core.Result[T], other core.Result[V]) core.Result[V] {
+	if result.IsOk() {
+		return other
+	}
+	return internal.Err[V](result.UnwrapErr())
+}
+
+func ResultAndThen[T, V any](result core.Result[T], fn func(inner T) core.Result[V]) core.Result[V] {
+	if result.IsOk() {
+		return fn(result.Unwrap())
+	}
+	return internal.Err[V](result.UnwrapErr())
+}
+
 // ResultMap transforms a Result[T] to Result[V] by applying a function to the Ok value.
 // If the result is Err, it returns Err[V] with the same error.
 //
@@ -22,10 +36,7 @@ import (
 //	})
 //	transformed.IsError() // true
 func ResultMap[T, V any](result core.Result[T], fn func(inner T) V) core.Result[V] {
-	if result.IsOk() {
-		return internal.Ok(fn(result.Unwrap()))
-	}
-	return internal.Err[V](result.UnwrapErr())
+	return internal.ResultMap(result, fn)
 }
 
 // ResultMapOr transforms a Result[T] to Result[V] by applying a function to the Ok value,
@@ -47,10 +58,7 @@ func ResultMap[T, V any](result core.Result[T], fn func(inner T) V) core.Result[
 //	}, "DEFAULT")
 //	transformed.Unwrap() // "DEFAULT"
 func ResultMapOr[T, V any](result core.Result[T], fn func(inner T) V, or V) core.Result[V] {
-	if result.IsOk() {
-		return internal.Ok(fn(result.Unwrap()))
-	}
-	return internal.Ok(or)
+	return internal.ResultMapOr(result, fn, or)
 }
 
 // ResultMapOrElse transforms a Result[T] to Result[V] by applying a function to the Ok value,
@@ -82,8 +90,5 @@ func ResultMapOr[T, V any](result core.Result[T], fn func(inner T) V, or V) core
 //	)
 //	transformed.Unwrap() // "EXPECTED"
 func ResultMapOrElse[T, V any](result core.Result[T], fn func(inner T) V, orElse func(error) V) core.Result[V] {
-	if result.IsOk() {
-		return internal.Ok(fn(result.Unwrap()))
-	}
-	return internal.Ok(orElse(result.UnwrapErr()))
+	return internal.ResultMapOrElse(result, fn, orElse)
 }

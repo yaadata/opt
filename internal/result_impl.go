@@ -70,9 +70,35 @@ func (r *result[T]) IsErrorAnd(pred core.Predicate[error]) bool {
 	return false
 }
 
+func (r *result[T]) Map(fn func(value T) any) core.Result[any] {
+	return ResultMap(r, fn)
+}
+
+func (r *result[T]) MapOr(fn func(value T) any, or any) core.Result[any] {
+	return ResultMapOr(r, fn, or)
+}
+
+func (r *result[T]) MapOrElse(fn func(value T) any, orElse func(err error) any) core.Result[any] {
+	return ResultMapOrElse(r, fn, orElse)
+}
+
 func (r *result[T]) MapErr(fn func(inner error) error) core.Result[T] {
 	if r.IsError() {
 		return Err[T](fn(r.UnwrapErr()))
+	}
+	return r
+}
+
+func (r *result[T]) Or(other core.Result[T]) core.Result[T] {
+	if r.IsError() {
+		return other
+	}
+	return r
+}
+
+func (r *result[T]) OrElse(fn func(err error) core.Result[T]) core.Result[T] {
+	if r.IsError() {
+		return fn(r.UnwrapErr())
 	}
 	return r
 }
@@ -110,4 +136,25 @@ func (r *result[T]) UnwrapOrDefault() T {
 		return *new(T)
 	}
 	return *r.value
+}
+
+func ResultMap[T, V any](result core.Result[T], fn func(inner T) V) core.Result[V] {
+	if result.IsOk() {
+		return Ok(fn(result.Unwrap()))
+	}
+	return Err[V](result.UnwrapErr())
+}
+
+func ResultMapOr[T, V any](result core.Result[T], fn func(inner T) V, or V) core.Result[V] {
+	if result.IsOk() {
+		return Ok(fn(result.Unwrap()))
+	}
+	return Ok(or)
+}
+
+func ResultMapOrElse[T, V any](result core.Result[T], fn func(inner T) V, orElse func(error) V) core.Result[V] {
+	if result.IsOk() {
+		return Ok(fn(result.Unwrap()))
+	}
+	return Ok(orElse(result.UnwrapErr()))
 }

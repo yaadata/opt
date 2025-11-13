@@ -7,28 +7,8 @@ package core
 //   - Ok: contains a successful value of type T
 //   - Err: contains an error
 type Result[T any] interface {
-	// Ok returns Some(value) if the result is Ok, otherwise returns None.
-	//
-	// Example:
-	//
-	//  result := Ok("value")
-	//  opt := result.Ok() // Some("value")
-	//
-	//  result := Err[string](errors.New("error"))
-	//  opt := result.Ok() // None
-	Ok() Option[T]
-
-	// Err returns Some(error) if the result is Err, otherwise returns None.
-	//
-	// Example:
-	//
-	//  result := Err[string](errors.New("error_message"))
-	//  opt := result.Err() // Some(error)
-	//
-	//  result := Ok("value")
-	//  opt := result.Err() // None
-	Err() Option[error]
-
+	ResultChain[T]
+	ResultToOption[T]
 	// IsOk returns true if the result is Ok.
 	//
 	// Example:
@@ -87,24 +67,6 @@ type Result[T any] interface {
 	//  value := result.Unwrap() // panics!
 	Unwrap() T
 
-	// MapErr applies a transformation function to the error if the Result is Err.
-	// If the Result is Ok, it returns the Result unchanged.
-	//
-	// Example:
-	//
-	//  result := Err[string](errors.New("A"))
-	//  transformed := result.MapErr(func(err error) error {
-	//      return fmt.Errorf("%s - B", err.Error())
-	//  })
-	//  transformed.UnwrapErr().Error() // "A - B"
-	//
-	//  result := Ok(15)
-	//  transformed := result.MapErr(func(err error) error {
-	//      return fmt.Errorf("transformed: %v", err)
-	//  })
-	//  transformed.Unwrap() // 15 (unchanged)
-	MapErr(func(error) error) Result[T]
-
 	// UnwrapErr returns the contained Err value.
 	// Panics if the result is Ok.
 	//
@@ -117,6 +79,16 @@ type Result[T any] interface {
 	//  result := Ok("value")
 	//  e := result.UnwrapErr() // panics!
 	UnwrapErr() error
+
+	// UnwrapOrDefault returns the contained Ok value or the zero value of type T.
+	//
+	// Example:
+	//  result := Ok("EXPECTED")
+	//  value := result.UnwrapOrDefault() // "EXPECTED"
+	//
+	//  result := Err[string](errors.New("error"))
+	//  value := result.UnwrapOrDefault() // ""
+	UnwrapOrDefault() T
 
 	// UnwrapOr returns the contained Ok value or the provided default value.
 	//
@@ -139,14 +111,53 @@ type Result[T any] interface {
 	//  result := Err[string](errors.New("error"))
 	//  value := result.UnwrapOrElse(func() string { return "default" }) // "default"
 	UnwrapOrElse(fn func() T) T
+}
 
-	// UnwrapOrDefault returns the contained Ok value or the zero value of type T.
+type ResultChain[T any] interface {
+	Map(fn func(value T) any) Result[any]
+	// MapErr applies a transformation function to the error if the Result is Err.
+	// If the Result is Ok, it returns the Result unchanged.
 	//
 	// Example:
-	//  result := Ok("EXPECTED")
-	//  value := result.UnwrapOrDefault() // "EXPECTED"
+	//
+	//  result := Err[string](errors.New("A"))
+	//  transformed := result.MapErr(func(err error) error {
+	//      return fmt.Errorf("%s - B", err.Error())
+	//  })
+	//  transformed.UnwrapErr().Error() // "A - B"
+	//
+	//  result := Ok(15)
+	//  transformed := result.MapErr(func(err error) error {
+	//      return fmt.Errorf("transformed: %v", err)
+	//  })
+	//  transformed.Unwrap() // 15 (unchanged)
+	MapErr(func(error) error) Result[T]
+	MapOr(fn func(value T) any, or any) Result[any]
+	MapOrElse(fn func(value T) any, orElse func(err error) any) Result[any]
+	Or(res Result[T]) Result[T]
+	OrElse(fn func(err error) Result[T]) Result[T]
+}
+
+type ResultToOption[T any] interface {
+	// Ok returns Some(value) if the result is Ok, otherwise returns None.
+	//
+	// Example:
+	//
+	//  result := Ok("value")
+	//  opt := result.Ok() // Some("value")
 	//
 	//  result := Err[string](errors.New("error"))
-	//  value := result.UnwrapOrDefault() // ""
-	UnwrapOrDefault() T
+	//  opt := result.Ok() // None
+	Ok() Option[T]
+
+	// Err returns Some(error) if the result is Err, otherwise returns None.
+	//
+	// Example:
+	//
+	//  result := Err[string](errors.New("error_message"))
+	//  opt := result.Err() // Some(error)
+	//
+	//  result := Ok("value")
+	//  opt := result.Err() // None
+	Err() Option[error]
 }
