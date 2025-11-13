@@ -26,7 +26,7 @@ The following tools are used in this project
 ## Installation
 
 ```bash
-go get github.com/yaadata/optionsgo@v0.2
+go get github.com/yaadata/optionsgo@v0.3.0
 ```
 
 ## Quick Start
@@ -195,8 +195,7 @@ Run the test suite:
 just test
 ```
 
-Each merge to main is validated on the last 2 major version of Go across
-Windows, Mac and Linux.
+Each merge to main is validated on the last 2 major version of Go.
 
 ### Docs
 
