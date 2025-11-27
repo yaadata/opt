@@ -5,6 +5,12 @@ import (
 	"github.com/yaadata/optionsgo/internal"
 )
 
+// Option is a re-export of [core.Option]
+type Option[T any] = core.Option[T]
+
+// Result is a re-export of [core.Result]
+type Result[T any] = core.Result[T]
+
 // None creates an Option that contains no value.
 //
 // Use None when you want to represent the absence of a value//
@@ -23,7 +29,7 @@ import (
 //	if result.IsNone() {
 //	    fmt.Println("User not found")
 //	}
-func None[T any]() core.Option[T] {
+func None[T any]() Option[T] {
 	return internal.None[T]()
 }
 
