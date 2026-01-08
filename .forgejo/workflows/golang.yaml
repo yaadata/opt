@@ -8,7 +8,6 @@ on:
       - '**.go'
       - 'go.mod'
       - 'go.sum'
-      - '.forgejo/workflows/**'
   pull_request:
     types: [opened, synchronize]
     paths: *applicable_paths

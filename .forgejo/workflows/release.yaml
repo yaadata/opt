@@ -90,8 +90,8 @@ jobs:
           TAG="${{ steps.extract_tag.outputs.tag }}"
           NOTES=$(cat release_notes.md)
 
-          # Escape special characters for JSON
-          NOTES_ESCAPED=$(echo "$NOTES" | jq -Rs .)
+          # Escape special characters for JSON using Python
+          NOTES_ESCAPED=$(printf '%s' "$NOTES" | python3 -c 'import json,sys; print(json.dumps(sys.stdin.read()))')
 
           curl -X POST \
             -H "Authorization: token ${GITHUB_TOKEN}" \
