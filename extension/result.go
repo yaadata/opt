@@ -1,8 +1,8 @@
 package extension
 
 import (
-	"github.com/yaadata/optionsgo/core"
-	"github.com/yaadata/optionsgo/internal"
+	"codeberg.org/yaadata/opt/core"
+	"codeberg.org/yaadata/opt/internal"
 )
 
 // ResultFromReturn converts Go's standard (value, error) return pattern into a Result.

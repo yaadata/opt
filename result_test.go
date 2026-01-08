@@ -7,8 +7,8 @@ import (
 
 	"github.com/shoenig/test/must"
 
-	. "github.com/yaadata/optionsgo"
-	"github.com/yaadata/optionsgo/extension"
+	. "codeberg.org/yaadata/opt"
+	"codeberg.org/yaadata/opt/extension"
 )
 
 func TestResult_Error(t *testing.T) {

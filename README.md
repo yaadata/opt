@@ -26,7 +26,7 @@ The following tools are used in this project
 ## Installation
 
 ```bash
-go get github.com/yaadata/optionsgo@v0.5.0
+go get codeberg.org/yaadata/opt@v0.5.0
 ```
 
 ## Quick Start
@@ -36,7 +36,7 @@ import (
     "errors"
     "fmt"
 
-    . "github.com/yaadata/optionsgo"
+    . "codeberg.org/yaadata/opt"
 )
 
 // Using Option
@@ -100,8 +100,8 @@ ahead to see each functions capability.
 
 ```go
 import ( 
-    "github.com/yaadata/optionsgo/extension"
-    . "github.com/yaadata/optionsgo"
+    "codeberg.org/yaadata/opt/extension"
+    . "codeberg.org/yaadata/opt"
 )
 
 // ...
@@ -138,7 +138,7 @@ extension.OptionAndThen(opt(3), toOption)
 
 ```go
 import (
-    . "github.com/yaadata/optionsgo"
+    . "codeberg.org/yaadata/opt"
 )
 // Create Some option
 opt := Some("hello")
@@ -155,7 +155,7 @@ empty.IsNone()  // true
 
 ```go
 import (
-    . "github.com/yaadata/optionsgo"
+    . "codeberg.org/yaadata/opt"
 )
 
 //... 

@@ -1,4 +1,4 @@
-module github.com/yaadata/optionsgo
+module codeberg.org/yaadata/opt
 
 go 1.25.4
 

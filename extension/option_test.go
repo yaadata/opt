@@ -6,9 +6,10 @@ import (
 	"testing"
 
 	"github.com/shoenig/test/must"
-	"github.com/yaadata/optionsgo/core"
-	"github.com/yaadata/optionsgo/extension"
-	"github.com/yaadata/optionsgo/internal"
+
+	"codeberg.org/yaadata/opt/core"
+	"codeberg.org/yaadata/opt/extension"
+	"codeberg.org/yaadata/opt/internal"
 )
 
 func TestOptionAndThen(t *testing.T) {
