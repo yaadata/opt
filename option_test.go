@@ -1,4 +1,4 @@
-package optionsgo_test
+package opt_test
 
 import (
 	"errors"
