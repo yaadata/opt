@@ -17,9 +17,9 @@ jobs:
     name: Lint
     runs-on: ubuntu-latest
     steps:
-      - name: Install Node
+      - name: Install Essentials
         run: |
-          apt-get update && apt-get install -y nodejs npm
+          apt-get update && apt-get install -y nodejs npm wget
       - name: Checkout code
         uses: https://code.forgejo.org/actions/checkout@v6
         with:
@@ -49,9 +49,9 @@ jobs:
       matrix:
         go-version: ['1.24', '1.25']
     steps:
-      - name: Install Node
+      - name: Install Essentials
         run: |
-          apt-get update && apt-get install -y nodejs npm
+          apt-get update && apt-get install -y nodejs npm wget
       - name: Checkout code
         uses: https://code.forgejo.org/actions/checkout@v6
         with:
@@ -61,7 +61,6 @@ jobs:
         uses: https://code.forgejo.org/actions/setup-go@v5
         with:
           go-version: ${{ matrix.go-version }}
-
       - name: Install Just
         run: |
           wget -qO- https://github.com/casey/just/releases/download/1.43.0/just-1.43.0-aarch64-unknown-linux-musl.tar.gz | tar xzf - -C /usr/local/bin just
