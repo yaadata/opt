@@ -1,6 +1,6 @@
 module codeberg.org/yaadata/opt
 
-go 1.25.4
+go 1.25.0
 
 require github.com/shoenig/test v1.12.2
 

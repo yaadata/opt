@@ -6,21 +6,29 @@ on:
     branches: [main]
     paths: &applicable_paths
       - '**/*.go'
-      - '**.go'
       - 'go.mod'
       - 'go.sum'
+      - 'justfile'
+      - 'mise.toml'
+      - '.forgejo/workflows/golang.yaml'
   pull_request:
     types: [opened, synchronize]
     paths: *applicable_paths
+
+env:
+  GOTOOLCHAIN: local
 
 jobs:
   lint:
     name: Lint
     runs-on: ubuntu-latest
+    strategy: &strategy
+      matrix:
+        go-version: ['1.25', '1.26']
     steps:
       - name: Install Essentials
         run: |
-          apt-get update && apt-get install -y nodejs npm wget curl
+          apt-get update && apt-get install -y wget curl
       - name: Checkout code
         uses: https://code.forgejo.org/actions/checkout@v6
         with:
@@ -29,7 +37,25 @@ jobs:
       - name: Set up Go
         uses: https://code.forgejo.org/actions/setup-go@v5
         with:
-          go-version: '1.25'
+          go-version: ${{ matrix.go-version }}
+
+      - name: Verify Go version is >= go.mod
+        run: |
+          required_version=$(awk '/^go /{print $2}' go.mod)
+          current_version=$(go env GOVERSION | sed 's/^go//')
+          required_major=$(echo "$required_version" | cut -d. -f1)
+          required_minor=$(echo "$required_version" | cut -d. -f2)
+          current_major=$(echo "$current_version" | cut -d. -f1)
+          current_minor=$(echo "$current_version" | cut -d. -f2)
+          echo "go.mod requires at least: ${required_major}.${required_minor}"
+          echo "Runner has: $(go env GOVERSION)"
+          if [ "$current_major" -lt "$required_major" ] || { [ "$current_major" -eq "$required_major" ] && [ "$current_minor" -lt "$required_minor" ]; }; then
+            echo "Go version too old: need >= ${required_major}.${required_minor}, got $(go env GOVERSION)"
+            exit 1
+          fi
+          if [ "$current_major" -gt "$required_major" ] || [ "$current_minor" -gt "$required_minor" ]; then
+            echo "Using newer Go than go.mod minimum; continuing."
+          fi
 
       - name: Install Just
         run: |
@@ -46,13 +72,11 @@ jobs:
   test:
     name: Test
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        go-version: ['1.24', '1.25']
+    strategy: *strategy
     steps:
       - name: Install Essentials
         run: |
-          apt-get update && apt-get install -y nodejs npm wget
+          apt-get update && apt-get install -y wget
       - name: Checkout code
         uses: https://code.forgejo.org/actions/checkout@v6
         with:
@@ -62,6 +86,23 @@ jobs:
         uses: https://code.forgejo.org/actions/setup-go@v5
         with:
           go-version: ${{ matrix.go-version }}
+      - name: Verify Go version is >= go.mod
+        run: |
+          required_version=$(awk '/^go /{print $2}' go.mod)
+          current_version=$(go env GOVERSION | sed 's/^go//')
+          required_major=$(echo "$required_version" | cut -d. -f1)
+          required_minor=$(echo "$required_version" | cut -d. -f2)
+          current_major=$(echo "$current_version" | cut -d. -f1)
+          current_minor=$(echo "$current_version" | cut -d. -f2)
+          echo "go.mod requires at least: ${required_major}.${required_minor}"
+          echo "Runner has: $(go env GOVERSION)"
+          if [ "$current_major" -lt "$required_major" ] || { [ "$current_major" -eq "$required_major" ] && [ "$current_minor" -lt "$required_minor" ]; }; then
+            echo "Go version too old: need >= ${required_major}.${required_minor}, got $(go env GOVERSION)"
+            exit 1
+          fi
+          if [ "$current_major" -gt "$required_major" ] || [ "$current_minor" -gt "$required_minor" ]; then
+            echo "Using newer Go than go.mod minimum; continuing."
+          fi
       - name: Install Just
         run: |
           wget -qO- https://github.com/casey/just/releases/download/1.43.0/just-1.43.0-aarch64-unknown-linux-musl.tar.gz | tar xzf - -C /usr/local/bin just
