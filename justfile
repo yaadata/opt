@@ -28,3 +28,12 @@ test:
 
 doc: 
     go doc -http
+
+pre-commit-install:
+	mise install aqua:pre-commit/pre-commit
+	mise exec -- pre-commit install --hook-type pre-commit --hook-type commit-msg
+
+pre-commit-run:
+	mise exec -- pre-commit run --all-files
+
+

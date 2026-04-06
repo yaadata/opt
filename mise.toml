@@ -1,2 +1,4 @@
 [tools]
 go = "1.26"
+"aqua:pre-commit/pre-commit" = "4.5.1"
+"pipx:mdformat" = { version = "1.0.0", uvx_args = "--with mdformat-gfm" }
