@@ -241,3 +241,27 @@ func TestOptionFromPointer(t *testing.T) {
 		must.Eq(t, value, actual.Unwrap())
 	})
 }
+
+func TestOptionFromValue(t *testing.T) {
+	t.Parallel()
+	t.Run("Zero value returns None", func(t *testing.T) {
+		t.Parallel()
+		// [A]rrange
+		value := 0
+		// [A]ct
+		actual := extension.OptionFromValue(value)
+		// [A]ssert
+		must.True(t, actual.IsNone())
+	})
+
+	t.Run("Non-zero value returns Some", func(t *testing.T) {
+		t.Parallel()
+		// [A]rrange
+		value := "value"
+		// [A]ct
+		actual := extension.OptionFromValue(value)
+		// [A]ssert
+		must.True(t, actual.IsSome())
+		must.Eq(t, value, actual.Unwrap())
+	})
+}

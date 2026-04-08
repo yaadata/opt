@@ -22,6 +22,26 @@ func OptionFromPointer[T any](ptr *T) core.Option[T] {
 	return internal.OptionFromPointer(ptr)
 }
 
+// OptionFromValue converts a comparable value to an Option.
+// It returns None if value is the zero value for T; otherwise it returns Some(value).
+//
+// Note: zero values such as 0, "", and false are treated as None.
+//
+// Example:
+//
+//	opt := OptionFromValue(0) // returns None
+//	opt.IsNone() // true
+//
+//	opt = OptionFromValue("hello") // returns Some("hello")
+//	opt.Unwrap() // "hello"
+func OptionFromValue[T comparable](value T) core.Option[T] {
+	var zero T
+	if value == zero {
+		return internal.None[T]()
+	}
+	return internal.Some(value)
+}
+
 // OptionFlatten removes one level of nesting from a nested Option.
 // It converts Option[Option[T]] into Option[T].
 //
