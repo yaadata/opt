@@ -33,8 +33,8 @@ jobs:
             exit 1
           fi
 
-          if ! [[ "$TAG" =~ ^v?[0-9]+\.[0-9]+\.[0-9]+(-(alpha|beta|rc)(-[0-9]{1,3})?)?$ ]]; then
-            echo "Error: Tag must be v0.0.0 or use one of: -alpha, -alpha-N, -beta, -beta-N, -rc, -rc-N (where N is 0-999)"
+          if ! [[ "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-(alpha|beta|rc)(\.[0-9]{1,3}))?$ ]]; then
+            echo "Error: Tag must be v0.0.0 or use one of: -alpha.N, -beta.N, -rc.N (where N is 0-999)"
             exit 1
           fi
 
