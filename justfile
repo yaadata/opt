@@ -1,4 +1,4 @@
-VERSION := 'v1.0.0-alpha.2'
+VERSION := 'v1.0.0-beta.1'
 
 version:
   @echo {{VERSION}} 

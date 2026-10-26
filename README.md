@@ -26,7 +26,7 @@ The following tools are used in this project
 ## Installation
 
 ```bash
-go get codeberg.org/yaadata/opt@v1.0.0-alpha.2
+go get codeberg.org/yaadata/opt@v1.0.0-beta.1
 ```
 
 ## Quick Start
