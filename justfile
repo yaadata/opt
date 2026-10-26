@@ -18,10 +18,10 @@ check-versions:
     echo "✅ All tool versions match mise.toml"
 
 lint:
-    golangci-lint run
+    mise exec -- golangci-lint run
 
 format:
-    golangci-lint run --fix
+    mise exec -- golangci-lint run --fix
 
 test:
     go test ./...

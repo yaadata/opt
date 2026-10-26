@@ -30,12 +30,12 @@ jobs:
         run: |
           apt-get update && apt-get install -y wget curl
       - name: Checkout code
-        uses: https://code.forgejo.org/actions/checkout@v6
+        uses: https://code.forgejo.org/actions/checkout@v7
         with:
           fetch-depth: 0
 
       - name: Set up Go
-        uses: https://code.forgejo.org/actions/setup-go@v5
+        uses: https://code.forgejo.org/actions/setup-go@v7
         with:
           go-version: ${{ matrix.go-version }}
 
@@ -57,17 +57,18 @@ jobs:
             echo "Using newer Go than go.mod minimum; continuing."
           fi
 
-      - name: Install Just
+      - name: Install mise
         run: |
-          wget -qO- https://github.com/casey/just/releases/download/1.43.0/just-1.43.0-aarch64-unknown-linux-musl.tar.gz | tar xzf - -C /usr/local/bin just
+          curl -sSfL https://mise.run | MISE_INSTALL_PATH=/usr/local/bin/mise sh
+          mise --version
 
-      - name: Install golangci-lint
+      - name: Install tools
         run: |
-          curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin
-          echo "$(go env GOPATH)/bin" >> $GITHUB_PATH
+          mise trust
+          mise install just golangci-lint
 
       - name: Run lint
-        run: just lint
+        run: mise exec -- just lint
 
   test:
     name: Test
@@ -78,12 +79,12 @@ jobs:
         run: |
           apt-get update && apt-get install -y wget
       - name: Checkout code
-        uses: https://code.forgejo.org/actions/checkout@v6
+        uses: https://code.forgejo.org/actions/checkout@v7
         with:
           fetch-depth: 0
 
       - name: Set up Go
-        uses: https://code.forgejo.org/actions/setup-go@v5
+        uses: https://code.forgejo.org/actions/setup-go@v7
         with:
           go-version: ${{ matrix.go-version }}
       - name: Verify Go version is >= go.mod
@@ -103,9 +104,15 @@ jobs:
           if [ "$current_major" -gt "$required_major" ] || [ "$current_minor" -gt "$required_minor" ]; then
             echo "Using newer Go than go.mod minimum; continuing."
           fi
-      - name: Install Just
+      - name: Install mise
         run: |
-          wget -qO- https://github.com/casey/just/releases/download/1.43.0/just-1.43.0-aarch64-unknown-linux-musl.tar.gz | tar xzf - -C /usr/local/bin just
+          curl -sSfL https://mise.run | MISE_INSTALL_PATH=/usr/local/bin/mise sh
+          mise --version
+
+      - name: Install tools
+        run: |
+          mise trust
+          mise install
 
       - name: Run tests
-        run: just test
+        run: mise exec -- just test

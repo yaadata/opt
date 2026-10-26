@@ -1,4 +1,7 @@
 [tools]
 go = "1.27"
+"aqua:casey/just" = "1.59.0"
+"aqua:golangci/golangci-lint" = "2.15.0"
 "aqua:pre-commit/pre-commit" = "4.5.1"
-"pipx:mdformat" = { version = "1.0.0", uvx_args = "--with mdformat-gfm" }
+"aqua:astral-sh/uv" = "0.13.5"
+"pypi:mdformat" = { version = "1.0.0", uvx_args = "--with mdformat-gfm" }
